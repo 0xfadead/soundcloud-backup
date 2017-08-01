@@ -4,7 +4,6 @@ import tempfile
 import sys
 import argparse
 import os
-import json
 
 CLIENT_ID = 'JlZIsxg2hY5WnBgtn3jfS0UYCl0K8DOg'
 INFO_BASE_URL = 'https://api.soundcloud.com/resolve.json'
@@ -73,6 +72,13 @@ def main():
             type=str,
             help="Url of SoundCloud profile you'd like to backup"
     ) 
+    parser.add_argument('-C', '--client-id',
+            type=str,
+            help='If you are gettinga 429 respone the default \
+                    client id is maxed out for the day so you \
+                    can optionally supply a new one.'
+
+    )
     parser.add_argument('-A', '--name',
             type=str,
             help="Name of the archive"
@@ -86,9 +92,13 @@ def main():
         print('Please use a valid HTTPS Soundcloud Url')
         return
 
+    if args.client_id is not None:
+        global CLIENT_ID
+        CLIENT_ID = args.client_id
+
     uid, uname, ulink, trackcnt = user_info(url)
     if uid is None:
-        print('Could not locate: {}'.format(artist_url))
+        print('Could not locate: {}'.format(url))
         return
 
     tracks = []
