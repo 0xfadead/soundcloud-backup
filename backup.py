@@ -3,7 +3,7 @@ import zipfile
 import tempfile
 import sys
 import argparse
-import os
+import time
 
 CLIENT_ID = 'JlZIsxg2hY5WnBgtn3jfS0UYCl0K8DOg'
 INFO_BASE_URL = 'https://api.soundcloud.com/resolve.json'
@@ -90,6 +90,11 @@ def main():
                     will be saved (default: 1024)'
 
     )
+    parser.add_argument('-d', '--delay-time',
+            type=int,
+            default=0,
+            help='Specify a delay time (in seconds) between each track download'
+    )
 
     args = parser.parse_args()
 
@@ -134,6 +139,7 @@ def main():
                     print('    {} has been saved to the archive'.format(track['title']))
                 else:
                     print('    Could not download: {}'.format(track['title']))
+                time.sleep(args.delay_time)
 
 if __name__ == '__main__':
     main()
