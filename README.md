@@ -4,7 +4,7 @@ A python script (version 3.6.2) that uses SoundCloud's streaming interface to cl
 
 ## Using the script
 
-```python backup.py backup.py [-h] [-C CLIENT_ID] [-A NAME] [-Z CHUNK_SIZE] [-d DELAY_TIME] url```
+```python backup.py [-h] [-C CLIENT_ID] [-A NAME] [-Z CHUNK_SIZE] [-d DELAY_TIME] url```
 
 ```python backup.py https://soundcloud.com/beniceandsettledown --delay-time 3 --chunk-size 2048```
 
