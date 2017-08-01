@@ -41,7 +41,7 @@ def user_info(scurl):
 
 def user_tracks(userid):
     # todo: downloadable + download_url (?)
-    target_keys = ('id', 'streamable', 'stream_url', 'permalink')
+    target_keys = ('id', 'streamable', 'stream_url', 'permalink', 'title')
     data = json_request(
         TRACKS_BASE_URL.format(userid), 
         {'client_id': CLIENT_ID})
@@ -92,18 +92,24 @@ def main():
         print('{} has no songs!'.format(artist_url))
         return
     
+    print('{:d} tracks on {}\'s page'.format(len(tracks), uname))
+
     zipname = (ARCHIVE_SKELETON.format(uname, ulink) 
             if args.name is None else args.name)
 
     with zipfile.ZipFile(zipname, 'w', zipfile.ZIP_DEFLATED) as archive:
+        print('Starting download...')
         for track in tracks:
-            if track['streamable']:
-                with tempfile.NamedTemporaryFile('wb') as f:
-                    if save_audio_stream(f, track['stream_url']):
-                        archive.write(f.name, arcname=STREAM_SKELETON
-                                .format(track['permalink']))
-                    else:
-                        print('Could not download: {}'.format(track['permalink']))
+            if not track['streamable']:
+                print('    {} is not streamable.'.format(track['title']))
+                continue 
+            with tempfile.NamedTemporaryFile('wb') as f:
+                if save_audio_stream(f, track['stream_url']):
+                    archive.write(f.name, arcname=STREAM_SKELETON
+                            .format(track['permalink']))
+                    print('    {} has been saved to the archive'.format(track['title']))
+                else:
+                    print('    Could not download: {}'.format(track['title']))
 
 if __name__ == '__main__':
     main()
