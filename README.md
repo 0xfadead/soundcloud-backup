@@ -4,7 +4,18 @@ A python script (version 3.6.2) that uses SoundCloud's streaming interface to cl
 
 ## Using the script
 
-```python backup.py https://soundcloud.com/beniceandsettledown --name='myarchive.zip'```
+```python backup.py backup.py [-h] [-C CLIENT_ID] [-A NAME] [-Z CHUNK_SIZE] [-d DELAY_TIME] url```
+```python backup.py https://soundcloud.com/beniceandsettledown --delay-time 3 --chunk-size 2048```
+
+## Options
+
+-C, --client-id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A custom client id. You should probably specify this if you are getting a 429 response
+
+-A, --name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Name of the archive
+
+-Z, --chunk-size&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The chunk size in which pieces of the mp3 file will be saved (default: 1024)
+
+-d, --delay-time&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Specify a delay time (in seconds) between each track download
 
 ## NOTICES
 
