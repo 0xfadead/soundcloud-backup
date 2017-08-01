@@ -9,6 +9,7 @@ import json
 CLIENT_ID = 'JlZIsxg2hY5WnBgtn3jfS0UYCl0K8DOg'
 INFO_BASE_URL = 'https://api.soundcloud.com/resolve.json'
 TRACKS_BASE_URL = 'https://api.soundcloud.com/users/{:d}/tracks'
+LIMIT = 50 # the max track data SoundCloud will return 
 
 ARCHIVE_SKELETON = '{:s}-{:s}.zip'
 # SoundCloud streamable tracks are transcoded
@@ -36,15 +37,18 @@ def user_info(scurl):
             'client_id': CLIENT_ID
         })
     if not bool(data): 
-        return [None for _ in range(3)] 
-    return data.get('id'), data.get('username'), data.get('permalink')
+        return [None for _ in range(4)] 
+    return data.get('id'), data.get('username'), \
+            data.get('permalink'), data.get('track_count')
 
-def user_tracks(userid):
+def user_tracks(userid, offset):
     # todo: downloadable + download_url (?)
     target_keys = ('id', 'streamable', 'stream_url', 'permalink', 'title')
     data = json_request(
         TRACKS_BASE_URL.format(userid), 
-        {'client_id': CLIENT_ID})
+        {'client_id': CLIENT_ID,
+         'offset': offset})
+
     return [{k: unfiltered.get(k) for k in target_keys} 
                 for unfiltered in data ]
 
@@ -82,17 +86,20 @@ def main():
         print('Please use a valid HTTPS Soundcloud Url')
         return
 
-    uid, uname, ulink = user_info(url)
+    uid, uname, ulink, trackcnt = user_info(url)
     if uid is None:
         print('Could not locate: {}'.format(artist_url))
         return
 
-    tracks = user_tracks(uid)
+    tracks = []
+    for offset in range(0, trackcnt, LIMIT+1):
+        tracks += user_tracks(uid, offset)
+
     if not bool(tracks):
         print('{} has no songs!'.format(artist_url))
         return
     
-    print('{:d} tracks on {}\'s page'.format(len(tracks), uname))
+    print('{:d} streamable tracks on {}\'s page'.format(len(tracks), uname))
 
     zipname = (ARCHIVE_SKELETON.format(uname, ulink) 
             if args.name is None else args.name)
