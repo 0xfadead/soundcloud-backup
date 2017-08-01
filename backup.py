@@ -51,14 +51,14 @@ def user_tracks(userid, offset):
     return [{k: unfiltered.get(k) for k in target_keys} 
                 for unfiltered in data ]
 
-def save_audio_stream(fout, streamurl):
+def save_audio_stream(fout, csize, streamurl):
     r = requests.get(streamurl, 
         {'client_id' : CLIENT_ID},
         stream=True)
     if r.status_code != requests.codes.ok:
         error('Could not reach: {}'.format(str(r.status_code)))
         return False
-    for chunk in r.iter_content(chunk_size=1024):
+    for chunk in r.iter_content(chunk_size=csize):
         if chunk: 
             fout.write(chunk)
     return True
@@ -82,6 +82,13 @@ def main():
     parser.add_argument('-A', '--name',
             type=str,
             help="Name of the archive"
+    )
+    parser.add_argument('-Z', '--chunk-size',
+            type=int,
+            default=1024,
+            help='The chunk size in which pieces of the mp3 file \
+                    will be saved (default: 1024)'
+
     )
 
     args = parser.parse_args()
@@ -121,7 +128,7 @@ def main():
                 print('    {} is not streamable.'.format(track['title']))
                 continue 
             with tempfile.NamedTemporaryFile('wb') as f:
-                if save_audio_stream(f, track['stream_url']):
+                if save_audio_stream(f, args.chunk_size, track['stream_url']):
                     archive.write(f.name, arcname=STREAM_SKELETON
                             .format(track['permalink']))
                     print('    {} has been saved to the archive'.format(track['title']))
