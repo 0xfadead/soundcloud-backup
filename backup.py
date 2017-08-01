@@ -74,9 +74,9 @@ def main():
     ) 
     parser.add_argument('-C', '--client-id',
             type=str,
-            help='If you are gettinga 429 respone the default \
+            help='If you are gettinga 429 response the default \
                     client id is maxed out for the day so you \
-                    can optionally supply a new one.'
+                    can optionally supply a different one.'
 
     )
     parser.add_argument('-A', '--name',
@@ -87,13 +87,13 @@ def main():
             type=int,
             default=1024,
             help='The chunk size in which pieces of the mp3 file \
-                    will be saved (default: 1024)'
+                    will be saved (default: 1024).'
 
     )
     parser.add_argument('-d', '--delay-time',
             type=int,
             default=0,
-            help='Specify a delay time (in seconds) between each track download'
+            help='Specify a delay time (in seconds) between each track download.'
     )
 
     args = parser.parse_args()
